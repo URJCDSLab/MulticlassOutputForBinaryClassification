@@ -370,7 +370,7 @@ InTheModel <- function(df,kernelSVM,num_cuts,cv_folds,vector_GPS,restriction,use
   
   for (i in 1:length(list_parameters)){
     C_i <- list_parameters[i]
-    print(paste('C_i=',C_i))
+    #print(paste('C_i=',C_i))
     
     for (h in 1:length(folds)){
       f = folds[[h]]
@@ -432,6 +432,7 @@ InTheModel <- function(df,kernelSVM,num_cuts,cv_folds,vector_GPS,restriction,use
         thresholds = NA
         GPS_test <- NA
         error_test <- NA
+        CM_test <- NA # NUEVO
       } else{
         p_vector <- metrics_probs[vector_GPS]
         metrics_probs$GPS = GPS_df_filas(p_vector)
@@ -448,7 +449,7 @@ InTheModel <- function(df,kernelSVM,num_cuts,cv_folds,vector_GPS,restriction,use
           pr_metrics_test <- get_p_metrics_from_CM(CM_test)
           p_v <- as.vector(pr_metrics_test$metrics_probs_v[vector_GPS])
           GPS_test <- GPS(p_v)
-          print(GPS_test)
+          #print(GPS_test)
           pTest = pr_metrics_test$p
           p_Test = pr_metrics_test$p_
           rTest = pr_metrics_test$r
