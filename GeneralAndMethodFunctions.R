@@ -311,9 +311,22 @@ get_best_threshold <- function(df) {
   gps_test <- sapply(df, function(fold) fold$GPS_test)
   
   if (any(!is.na(errors))) {
-    best_fold_idx <- which.min(errors[!is.na(errors)])
+    #best_fold_idx <- which.min(errors[!is.na(errors)])
+    valid_idx <- which(!is.na(errors))
+    min_error <- min(errors[valid_idx])
+    candidates <- valid_idx[errors[valid_idx] == min_error]
+    
+    # If several folds have the same minimum error, choose the one with largest validation GPS
+    if (length(candidates) > 1) {
+      gps_candidates <- gps_test[candidates]
+      best_fold_idx <- candidates[which.max(gps_candidates)]
+    } else {
+      best_fold_idx <- candidates
+    }
   } else {
-    best_fold_idx <- which.max(gps_test)
+    #best_fold_idx <- which.max(gps_test)
+    valid_idx <- which(!is.na(gps_test))
+    best_fold_idx <- valid_idx[which.max(gps_test[valid_idx])]
   }
   
   best_threshold <- df[[best_fold_idx]]$ths
@@ -347,9 +360,177 @@ error_function <- function(p_new, p_new_, r_new, r_new_,user_condition) {
   }
 }
 
+# 
+# 
+# InTheModel <- function(df,kernelSVM,num_cuts,cv_folds,vector_GPS,restriction,user_condition,
+#                        min_th=0.05,max_th=0.95, step_th=0.05,
+#                        list_parameters=c(0.001, 0.01, 0.1, 1, 5, 10, 20, 50, 100,150, 200)){
+#   
+#   k = num_cuts + 1  # Number of classes desired by the user
+#   elementsCM = k*2 
+#   number_p_r = k*4 # dimensions to save results
+#   
+#   set.seed(56)
+#   folds <- createFolds(df$class, k = cv_folds)
+#   
+#   # To save results
+#   tracking <- data.frame('Params_model'=list_parameters)
+#   tracking$GPS_train <- NA
+#   tracking$GPS_test <- NA
+#   tracking$error_test <- NA
+#   results_folds <- list()
+#   list_results_folds <-list()
+#   
+#   for (i in 1:length(list_parameters)){
+#     C_i <- list_parameters[i]
+#     print(paste('C_i=',C_i))
+#     
+#     for (h in 1:length(folds)){
+#       f = folds[[h]]
+#       training_fold <- df[-f, ]
+#       test_fold <- df[f, ]
+#       # Model training
+#       test_no_target <- test_fold[, setdiff(names(test_fold), "class")]
+#       train_no_target <- training_fold[, setdiff(names(training_fold), "class")]
+#       set.seed(579)
+#       model_svm = svm(class ~ ., data=training_fold, kernel=kernelSVM, scale=FALSE, cost=C_i,probability=TRUE)
+#       # Prediction on train
+#       pred_svm_train = predict(model_svm, train_no_target, probability=TRUE)
+#       probs_model_fold_train <- attr(pred_svm_train,"probabilities")
+#       probs_model_fold_train <- probs_model_fold_train[,c("0", "1")]
+#       probs_model_fold_train_1 <- probs_model_fold_train[,"1"]
+#       # Prediction on test
+#       pred_svm_alg = predict(model_svm, test_no_target, probability=TRUE)
+#       probs_model_fold_test <- attr(pred_svm_alg,"probabilities")
+#       probs_model_fold_test <- probs_model_fold_test[,c("0", "1")]
+#       probs_model_fold_test_1 <- probs_model_fold_test[,"1"]
+#       
+#       cat_combo = preds_k_cuts(probs_model_fold_train,num_cuts,min_th,max_th,step_th)
+#       Y_pred_class = cat_combo$Y_pred_cat
+#       
+#       # Matrix to save p, r metrics according to each CM
+#       metrics_probs = matrix(nrow=nrow(Y_pred_class), ncol=number_p_r)
+#       
+#       for (j in 1:nrow(Y_pred_class)) { 
+#         CM = table(Y_pred_class[j,],training_fold$class)
+#         if (dim(CM)[1] == k) {# if k classes are produced
+# 
+#           pr_metrics_from_CM = get_p_metrics_from_CM(CM)
+#           p = pr_metrics_from_CM$p
+#           p_ = pr_metrics_from_CM$p_
+#           r = pr_metrics_from_CM$r
+#           r_ = pr_metrics_from_CM$r_
+#           
+#           if (restriction){
+#             if (user_condition(p, p_, r, r_)$total_cond) { 
+#               metrics_probs[j, ] <- c(p, p_, r, r_)
+#             }
+#           } else{ 
+#             metrics_probs[j, ] <- c(p, p_, r, r_)
+#           }
+#           
+#           
+#         }# end if k classes are produced
+#       }# en for
+#       
+#       metrics_probs=data.frame(metrics_probs)
+#       colnames(metrics_probs) <- c(
+#         paste0("p1", 1:k),  # p11, p12, ..., p1k
+#         paste0("p_1", 1:k), # p_11, p_12, ..., p_1k
+#         paste0("r", 1:k, "1"),  # r11, r12, ..., rk1
+#         paste0("r", 1:k, "_1")   # r_11, r_12, ..., r_k1
+#       )
+#       if (all(is.na(metrics_probs))){
+#         GPS_value = NA
+#         thresholds = NA
+#         GPS_test <- NA
+#         error_test <- NA
+#         CM_test <- NA # NUEVO
+#       } else{
+#         p_vector <- metrics_probs[vector_GPS]
+#         metrics_probs$GPS = GPS_df_filas(p_vector)
+#         pos = which.max(metrics_probs$GPS)
+#         GPS_value = metrics_probs$GPS[pos]
+#         thresholds = cat_combo$combo_ths[,pos]
+#         
+#         breaks <- c(Inf, thresholds, -Inf)
+#         Y_pred_class_test <- cut(probs_model_fold_test_1, breaks = breaks, labels = 0:length(thresholds), right = FALSE)
+#         unique_values <- unique(Y_pred_class_test) 
+#         Y_pred_class_test <- factor(Y_pred_class_test, levels = sort(unique_values))
+#         CM_test <- table(Class_predicted = Y_pred_class_test,Class_observed = test_fold$class)
+#         if (dim(CM_test)[1] == k){
+#           pr_metrics_test <- get_p_metrics_from_CM(CM_test)
+#           p_v <- as.vector(pr_metrics_test$metrics_probs_v[vector_GPS])
+#           GPS_test <- GPS(p_v)
+#           print(GPS_test)
+#           pTest = pr_metrics_test$p
+#           p_Test = pr_metrics_test$p_
+#           rTest = pr_metrics_test$r
+#           r_Test = pr_metrics_test$r_
+#           if (restriction){
+#             error_test <- error_function(pTest, p_Test, rTest, r_Test,user_condition)
+#           } else{
+#             error_test <- NA
+#           }
+#         }else{
+#           GPS_test <- NA
+#           error_test <- NA
+#         }
+#       }
+#       
+#       name_fold = paste0('Fold_',h)
+#       results_folds[[name_fold]] <-list('training_fold'=training_fold,'test_fold'=test_fold,
+#                                         'prob_train'=probs_model_fold_train,
+#                                         'prob_test' = probs_model_fold_test,
+#                                         'GPS_train'=GPS_value,
+#                                         'ths' = thresholds,
+#                                         'CM_test'=CM_test,
+#                                         'GPS_test'=GPS_test,
+#                                         'error_test'=error_test,
+#                                         'model_trained'=model_svm)
+#     }
+#     
+#     # Save all results from folds
+#     name_c_i <- paste0('Param_',C_i)
+#     list_results_folds[[name_c_i]] = results_folds
+#     
+#     
+#     all_GPS_test <- as.data.frame(lapply(results_folds, function(x) x$GPS_test))
+#     all_GPS_train <- as.data.frame(lapply(results_folds, function(x) x$GPS_train))
+#     all_error_test <- as.data.frame(lapply(results_folds, function(x) x$error_test))
+#     
+#     tracking[i,]$GPS_train = mean(as.numeric(all_GPS_train))
+#     tracking[i,]$GPS_test = mean(as.numeric(all_GPS_test))
+#     tracking[i,]$error_test = mean(as.numeric(all_error_test))
+#     
+#   }
+#   tracking$error_test[is.na(tracking$error_test)] <- 0
+#   
+#   tracking$difference <- tracking$GPS_test - tracking$error_test
+#   best_param_model <- tracking[which.max(tracking$difference), 'Params_model']
+#   param_name <- paste0("Param_", best_param_model)
+#   results_best_param <- list_results_folds[[param_name]]
+#   
+#   best_values <- get_best_threshold(results_best_param)
+#   best_threshold <- best_values$best_threshold
+#   best_fold <- best_values$best_fold
+#   best_GPS_train = results_best_param[[best_fold]]$GPS_train
+#   best_GPS_test = results_best_param[[best_fold]]$GPS_test
+#   best_error_test = results_best_param[[best_fold]]$error_test
+#   best_CM_test = results_best_param[[best_fold]]$CM_test
+#   best_model_trained <- results_best_param[[best_fold]]$model_trained
+#   
+#   results_to_return <- list('thresholds'=best_threshold,'GPS_train'=best_GPS_train,'GPS_test'=best_GPS_test,'error'=best_error_test,
+#                             'best_CM_test'=best_CM_test,
+#                             'best_param_model'=best_param_model,'best_model_trained'=best_model_trained)
+#   return(results_to_return)
+#   
+# }
+
 
 
 InTheModel <- function(df,kernelSVM,num_cuts,cv_folds,vector_GPS,restriction,user_condition,
+                       calibrate = FALSE,scale_svm = FALSE,balance_classes = FALSE,
                        min_th=0.05,max_th=0.95, step_th=0.05,
                        list_parameters=c(0.001, 0.01, 0.1, 1, 5, 10, 20, 50, 100,150, 200)){
   
@@ -365,13 +546,15 @@ InTheModel <- function(df,kernelSVM,num_cuts,cv_folds,vector_GPS,restriction,use
   tracking$GPS_train <- NA
   tracking$GPS_test <- NA
   tracking$error_test <- NA
-  results_folds <- list()
+  #results_folds <- list()
   list_results_folds <-list()
   
   for (i in 1:length(list_parameters)){
+    results_folds <- list()
     C_i <- list_parameters[i]
-    #print(paste('C_i=',C_i))
+    print(paste('C_i=',C_i))
     
+    # Buscamos umbrales para cada fold con estos parámetros
     for (h in 1:length(folds)){
       f = folds[[h]]
       training_fold <- df[-f, ]
@@ -380,7 +563,17 @@ InTheModel <- function(df,kernelSVM,num_cuts,cv_folds,vector_GPS,restriction,use
       test_no_target <- test_fold[, setdiff(names(test_fold), "class")]
       train_no_target <- training_fold[, setdiff(names(training_fold), "class")]
       set.seed(579)
-      model_svm = svm(class ~ ., data=training_fold, kernel=kernelSVM, scale=FALSE, cost=C_i,probability=TRUE)
+      #model_svm = svm(class ~ ., data=training_fold, kernel=kernelSVM, scale=FALSE, cost=C_i,probability=TRUE)
+      if (balance_classes) {
+        tab_classes <- table(training_fold$class)
+        class_weights_svm <- nrow(training_fold) /(length(tab_classes) * as.numeric(tab_classes))
+        names(class_weights_svm) <- names(tab_classes)
+        model_svm <- svm(class ~ .,data = training_fold,kernel = kernelSVM,scale = scale_svm,
+                         cost = C_i,probability = TRUE,class.weights = class_weights_svm)
+      } else {
+        model_svm <- svm(class ~ .,data = training_fold,kernel = kernelSVM,scale = scale_svm,
+                         cost = C_i,probability = TRUE)
+      }
       # Prediction on train
       pred_svm_train = predict(model_svm, train_no_target, probability=TRUE)
       probs_model_fold_train <- attr(pred_svm_train,"probabilities")
@@ -392,16 +585,37 @@ InTheModel <- function(df,kernelSVM,num_cuts,cv_folds,vector_GPS,restriction,use
       probs_model_fold_test <- probs_model_fold_test[,c("0", "1")]
       probs_model_fold_test_1 <- probs_model_fold_test[,"1"]
       
+      
+      if (calibrate == TRUE){ # si se calibra, se machacan los valores previos
+        scores_train <- attributes(predict(model_svm, train_no_target, decision.values = TRUE))$decision.values
+        scores_test <- attributes(predict(model_svm, test_no_target, decision.values = TRUE))$decision.values
+        probs_calibrated <- calibrate_svm(scores_train,training_fold,scores_test,test_fold)
+        probs_model_fold_train <- probs_calibrated$probs_cal_train
+        probs_model_fold_train_1 <- probs_model_fold_train[,'1']
+        probs_model_fold_test <- probs_calibrated$probs_cal_test
+        probs_model_fold_test_1 <- probs_model_fold_test[,'1']
+        #print(summary(probs_model_fold_train[,'1']))
+        #print(summary(probs_model_fold_test[,'1']))
+      }
+      
+      # Evaluamos todas las opciones de umbrales
       cat_combo = preds_k_cuts(probs_model_fold_train,num_cuts,min_th,max_th,step_th)
       Y_pred_class = cat_combo$Y_pred_cat
+      # cat_combo$combo_ths # combinations of thresholds
       
+      # Matrix to save CMs
+      #matrix_CMs = matrix(nrow=nrow(Y_pred_class), ncol=elementsCM)
       # Matrix to save p, r metrics according to each CM
       metrics_probs = matrix(nrow=nrow(Y_pred_class), ncol=number_p_r)
       
-      for (j in 1:nrow(Y_pred_class)) { 
+      for (j in 1:nrow(Y_pred_class)) { # para cada categorización asociada a una combinación de umbrales
         CM = table(Y_pred_class[j,],training_fold$class)
         if (dim(CM)[1] == k) {# if k classes are produced
-
+          #print(CM)
+          #matrix_CMs[j,]=c(CM) 
+          #print(paste('j=',j))
+          
+          #metrics_probs_i = get_p_metrics_from_CM(CM)$metrics_probs_v
           pr_metrics_from_CM = get_p_metrics_from_CM(CM)
           p = pr_metrics_from_CM$p
           p_ = pr_metrics_from_CM$p_
@@ -409,10 +623,12 @@ InTheModel <- function(df,kernelSVM,num_cuts,cv_folds,vector_GPS,restriction,use
           r_ = pr_metrics_from_CM$r_
           
           if (restriction){
-            if (user_condition(p, p_, r, r_)$total_cond) { 
+            # Evaluamos las restricciones
+            if (user_condition(p, p_, r, r_)$total_cond) { # los que no cumplen las condiciones se quedan en NA
+              #print('cumple restriccions')
               metrics_probs[j, ] <- c(p, p_, r, r_)
             }
-          } else{ 
+          } else{ #no restriction case
             metrics_probs[j, ] <- c(p, p_, r, r_)
           }
           
@@ -421,35 +637,46 @@ InTheModel <- function(df,kernelSVM,num_cuts,cv_folds,vector_GPS,restriction,use
       }# en for
       
       metrics_probs=data.frame(metrics_probs)
+      # Generar los nombres de las columnas 
       colnames(metrics_probs) <- c(
         paste0("p1", 1:k),  # p11, p12, ..., p1k
         paste0("p_1", 1:k), # p_11, p_12, ..., p_1k
         paste0("r", 1:k, "1"),  # r11, r12, ..., rk1
         paste0("r", 1:k, "_1")   # r_11, r_12, ..., r_k1
       )
+      
+      # Initialize in case no valid threshold combination is found
+      CM_test <- matrix(NA_real_,nrow = k,ncol = 2,dimnames = list(
+        Class_predicted = 0:(k - 1),Class_observed = c("0", "1")))
+      
       if (all(is.na(metrics_probs))){
         GPS_value = NA
         thresholds = NA
         GPS_test <- NA
         error_test <- NA
-        CM_test <- NA # NUEVO
       } else{
         p_vector <- metrics_probs[vector_GPS]
         metrics_probs$GPS = GPS_df_filas(p_vector)
         pos = which.max(metrics_probs$GPS)
+        #print(pos)
         GPS_value = metrics_probs$GPS[pos]
         thresholds = cat_combo$combo_ths[,pos]
+        #best_CM = matrix_CMs[pos,]
+        #print(best_CM)
         
+        # Evaluamos en test el mejor umbral y vemos cuánto difiere con respecto a las restricciones
+        #probs_model_fold_test_1
         breaks <- c(Inf, thresholds, -Inf)
         Y_pred_class_test <- cut(probs_model_fold_test_1, breaks = breaks, labels = 0:length(thresholds), right = FALSE)
-        unique_values <- unique(Y_pred_class_test) 
+        unique_values <- unique(Y_pred_class_test) # para que  no pille niveles inexistentes en los datos
         Y_pred_class_test <- factor(Y_pred_class_test, levels = sort(unique_values))
         CM_test <- table(Class_predicted = Y_pred_class_test,Class_observed = test_fold$class)
         if (dim(CM_test)[1] == k){
+          #print(CM_test)
           pr_metrics_test <- get_p_metrics_from_CM(CM_test)
           p_v <- as.vector(pr_metrics_test$metrics_probs_v[vector_GPS])
           GPS_test <- GPS(p_v)
-          #print(GPS_test)
+          print(GPS_test)
           pTest = pr_metrics_test$p
           p_Test = pr_metrics_test$p_
           rTest = pr_metrics_test$r
@@ -485,19 +712,26 @@ InTheModel <- function(df,kernelSVM,num_cuts,cv_folds,vector_GPS,restriction,use
     all_GPS_test <- as.data.frame(lapply(results_folds, function(x) x$GPS_test))
     all_GPS_train <- as.data.frame(lapply(results_folds, function(x) x$GPS_train))
     all_error_test <- as.data.frame(lapply(results_folds, function(x) x$error_test))
+    #param_model <- results_folds$Fold_1$Param_model
     
     tracking[i,]$GPS_train = mean(as.numeric(all_GPS_train))
     tracking[i,]$GPS_test = mean(as.numeric(all_GPS_test))
     tracking[i,]$error_test = mean(as.numeric(all_error_test))
+    #tracking[i,]$Params_model = param_model
     
   }
+  # Elegimos los mejores parámetros como los que max(GPS_test-error_test)
+  # Ponemos los na de error_test a 0
   tracking$error_test[is.na(tracking$error_test)] <- 0
   
+  # Calcular la diferencia (GPS_test - error_test)
   tracking$difference <- tracking$GPS_test - tracking$error_test
+  # max
   best_param_model <- tracking[which.max(tracking$difference), 'Params_model']
   param_name <- paste0("Param_", best_param_model)
   results_best_param <- list_results_folds[[param_name]]
   
+  # Obtener el mejor umbral para el mejor parámetro
   best_values <- get_best_threshold(results_best_param)
   best_threshold <- best_values$best_threshold
   best_fold <- best_values$best_fold
