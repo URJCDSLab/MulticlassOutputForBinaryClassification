@@ -403,6 +403,20 @@ E6_test_plot <- barplot_CM_CI(CM, list_names_obs, list_names_pred, labels_top, l
 
 # Pima
 
+### Summary of external-test results
+
+Mean positive-class prevalence (%) and mean category size (%) across 10 train-test splits. Categories are ordered as [Very low, Low, Medium, High, Very high]. A valid split has all five requested categories non-empty.
+
+| Method / configuration | Valid splits | Positive-class prevalence (%) | Category size (%) |
+|:--|:--:|:--|:--|
+| Equal-frequency | 10/10 | [4.0, 18.6, 25.1, 48.8, 77.8] | [22.9, 15.6, 16.9, 27.3, 17.3] |
+| Optimal binning | 10/10 | [4.0, 20.2, 38.9, 68.3, 85.0] | [23.0, 26.1, 25.7, 16.5, 8.7] |
+| After-the-model, constrained | 10/10 | [7.0, 23.6, 37.9, 65.2, 99.1] | [30.1, 23.6, 14.0, 31.0, 1.3] |
+| In-the-model, constrained | 10/10 | [4.3, 4.9, 46.3, 79.7, 100.0] | [21.3, 11.7, 60.0, 6.5, 0.4] |
+
+Detailed plots and per-category summaries follow.
+
+
 En Pima solo mostramos TEST en el paper, no mostramos los resultados de
 train.
 
@@ -795,3 +809,53 @@ E6_test_plot_pima <- barplot_CM_CI(CM, list_names_obs, list_names_pred, labels_t
 ```
 
 ![](AnalysisVarianceAcrossSplits_files/figure-commonmark/unnamed-chunk-54-1.png)
+
+# Cardiotocography (CTG)
+
+## External-test results
+
+Mean pathological prevalence (%) and mean category size (%) across 10 train-test splits. Categories: [Low risk, Monitoring, High risk]. A valid split contains three non-empty categories.
+
+| Method / configuration | Valid splits | Positive-class prevalence (%) | Category size (%) |
+|:--|:--:|:--|:--|
+| Equal-width | 10/10 | [0.7, 53.8, 97.4] | [91.2, 2.0, 6.7] |
+| Equal-frequency | 0/10 | [empty, 0.0, 25.2] | [0.0, 67.5, 32.5] |
+| Optimal binning | 9/10 | [0.1, 11.8, 91.4] | [84.2, 7.7, 8.1] |
+| After-the-model, constrained | 10/10 | [0.13, 29.2, 99.5] | [85.1, 9.9, 5.0] |
+
+The constrained After-the-model configuration requires the Monitoring category to contain at least 10% of the training observations. The equal-frequency row describes the degenerate two-category outcome: it did not produce three non-empty categories in any repetition.
+
+# Phishing
+
+## External-test results
+
+Mean phishing prevalence (%) and mean category size (%) across 10 train-test splits. Categories: [Low phishing risk, Suspicious, High phishing risk]. A valid split contains three non-empty categories.
+
+| Method / configuration | Valid splits | Positive-class prevalence (%) | Category size (%) |
+|:--|:--:|:--|:--|
+| Equal-frequency | 10/10 | [1.6, 43.2, 99.7] | [33.3, 33.4, 33.3] |
+| Optimal binning | 10/10 | [4.9, 77.9, 100.0] | [47.7, 29.2, 23.0] |
+| After-the-model, minimum Suspicious | 10/10 | [4.4, 47.1, 97.7] | [47.2, 10.9, 41.9] |
+
+The constrained After-the-model configuration requires the Suspicious category to contain at least 10% of the training observations.
+
+# Credit Card Fraud
+
+## External-test results
+
+Mean fraud prevalence (%) within each predicted category over 10 train-test splits. Brackets give 95% confidence intervals. Category size gives the mean percentage of test observations assigned to [Low fraud risk, Suspicious, High fraud risk]. A dash denotes a category not used by the binary method.
+
+| Method / configuration | Low fraud risk (%) | Suspicious (%) | High fraud risk (%) | Category size (%) |
+|:--|--:|--:|--:|:--|
+| Classical (threshold 0.5) | 0.037 [0.033, 0.041] | — | 94.6 [92.5, 96.6] | [99.86, —, 0.14] |
+| Equal-width | 0.030 [0.026, 0.034] | 59.9 [52.5, 67.3] | 97.0 [96.0, 98.0] | [99.84, 0.03, 0.13] |
+| Isotonic + equal-width | 0.031 [0.027, 0.035] | 47.9 [34.3, 61.6] | 95.2 [93.0, 97.4] | [99.84, 0.02, 0.14] |
+| ROC-Youden | 0.018 [0.015, 0.022] | — | 13.1 [11.1, 15.2] | [98.78, —, 1.22] |
+| After-the-model, Minimum Suspicious | 0.025 [0.021, 0.029] | 10.3 [7.5, 13.1] | 92.9 [90.4, 95.3] | [99.76, 0.09, 0.15] |
+| After-the-model, High-purity High | 0.036 [0.032, 0.039] | 63.8 [48.1, 79.6] | 95.9 [93.8, 98.0] | [99.85, 0.01, 0.14] |
+| After-the-model, Uncertainty | 0.025 [0.022, 0.029] | 48.3 [38.6, 58.1] | 97.9 [97.1, 98.7] | [99.79, 0.11, 0.10] |
+
+Equal-frequency and optimal binning are not included in the table because neither produced the requested three non-empty categories in any of the 10 repetitions.
+
+The After-the-model configurations use different GPS objectives and training-set constraints to express the operational requirements of the Suspicious and High fraud risk categories. Full specifications are given in the paper.
+

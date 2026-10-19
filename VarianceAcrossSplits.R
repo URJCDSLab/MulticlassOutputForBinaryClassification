@@ -662,7 +662,11 @@ VarianceSplitsPima <- function(df, seed_vector){
   
   return(list(E1_summary=E1_summary,E2_summary=E2_summary,E3_summary=E3_summary,
               E4_summary=E4_summary,E_equal_freq_summary = E_equal_freq_summary,
-              E5_summary=E5_summary,E6_summary=E6_summary,E_optimal_summary = E_optimal_summary))
+              E5_summary=E5_summary,E6_summary=E6_summary,E_optimal_summary = E_optimal_summary,
+              raw = list(E1 = list_E1, E2 = list_E2, E3 = list_E3,
+                         E4 = list_E4, E5 = list_E5, E6 = list_E6,
+                         E_equal_freq = list_E_equal_freq,
+                         E_optimal = list_E_optimal)))
   
 }
 
@@ -3067,7 +3071,7 @@ VarianceSplitsCreditAfter <- function(df, seed_vector) {
                        user_condition) {
     
     result_train <- suppressWarnings(
-      Case_MaxGPS_Restrictions(
+      AfterTheModel(
         dfTrain,
         probs_train,
         restriction = TRUE,
