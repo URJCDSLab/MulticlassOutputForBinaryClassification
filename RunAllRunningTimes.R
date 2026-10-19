@@ -1,6 +1,5 @@
 ################################################################################
 # RunAllRunningTimes.R
-# Reproduce the running-time study for the revised paper.
 #
 # LOCATION: repository root (next to RunningTimes_After_vs_In.R).
 # RUN FROM THE REPOSITORY ROOT:
@@ -12,13 +11,10 @@
 #   Results/running_times_table.md          # Markdown table for the report
 #   Results/running_times_sessionInfo.txt   # R / package / OS information
 #
-# The existing Results/AnalysisRunningTimes_After_In.md is NOT overwritten.
-# Check the new results first, then update the published Markdown report.
 #
 # Timing scope inherited from RunningTimes_After_vs_In.R:
 #   After-the-model: threshold optimization (model probabilities precomputed).
 #   In-the-model: SVM training/CV plus threshold optimization.
-# These measure different amounts of computation and are not equivalent stages.
 #
 # To repeat the full study from scratch, change OVERWRITE <- TRUE.
 # With OVERWRITE <- FALSE, completed groups with the same repetition count

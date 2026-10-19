@@ -1,8 +1,6 @@
 ## Constraint robustness: perturbations (+/- 0.05 by default).
-## Functions in this file extend the original repository's robustness script.
 ## Requires GeneralAndMethodFunctions.R to have been sourced first.
-## The aggregate changes in CM are computed from prop.table(CM) for After-the-model
-## and for the train/test variant of In-the-model, as in Revision2.
+
 
 
 # source('GeneralAndMethodFunctions.R')

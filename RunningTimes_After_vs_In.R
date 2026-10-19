@@ -1,25 +1,6 @@
 ################################################################################
 # RunningTimes_After_vs_In.R
-# Computational times: extension of Revision2/AnalysisRunningTimes_After_In.qmd
 #
-# Place this file in the ORIGINAL GitHub repository root, alongside
-# GeneralAndMethodFunctions.R and the datasets/ directory.
-#
-# Timing scope:
-#   After-the-model: ONLY threshold optimization, on precomputed probabilities.
-#   In-the-model: SVM hyperparameter fitting/CV AND threshold optimization.
-# Preparation, train/test split, SVM tuning for After-the-model, and RF fitting
-# are excluded from measured times. These two timings cover different work.
-#
-# Revision2 benchmarked In-the-model on the FULL real dataset, while the
-# After-the-model inputs were training partitions. Here both receive the SAME
-# training partition. Consequently times need not match the earlier table.
-#
-# Quick test:
-#   source('RunningTimes_After_vs_In.R')
-#   names(running_time_cases())
-#   x <- run_running_times(cases = 'simulated_2', repetitions = 2)
-#   print(x)
 #
 # Full study (expensive; original microbenchmark used 100 repetitions):
 #   x <- run_running_times(repetitions = 100,
