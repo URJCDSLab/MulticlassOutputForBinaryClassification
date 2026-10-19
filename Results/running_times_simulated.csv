@@ -1,0 +1,5 @@
+"case","dataset_case","method","repetitions","min_s","mean_s","median_s","max_s"
+"simulated_2","Simulated - 2 categories","In-the-model",100,1.444337915,1.48914584409,1.4684614275,2.114989598
+"simulated_2","Simulated - 2 categories","After-the-model",100,0.003277333,0.00474375173,0.0035281035,0.052986688
+"simulated_3","Simulated - 3 categories","In-the-model",100,2.584657588,2.63419579902,2.637415665,2.833639883
+"simulated_3","Simulated - 3 categories","After-the-model",100,0.03152634,0.03859533703,0.03204424,0.084640862

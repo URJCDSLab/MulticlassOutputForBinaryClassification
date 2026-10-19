@@ -1,0 +1,14 @@
+"case","dataset_case","method","repetitions","min_s","mean_s","median_s","max_s"
+"simulated_3","Simulated - 3 categories","After-the-model",100,0.03152634,0.03859533703,0.03204424,0.084640862
+"simulated_3","Simulated - 3 categories","In-the-model",100,2.584657588,2.63419579902,2.637415665,2.833639883
+"simulated_2","Simulated - 2 categories","After-the-model",100,0.003277333,0.00474375173,0.0035281035,0.052986688
+"simulated_2","Simulated - 2 categories","In-the-model",100,1.444337915,1.48914584409,1.4684614275,2.114989598
+"mammographic","Mammographic - 4 categories","After-the-model",100,0.119935889,0.16406501584,0.159604085,0.310387704
+"mammographic","Mammographic - 4 categories","In-the-model",100,5.490043576,6.32622856048,5.6012160265,9.186719979
+"pima","Pima - 5 categories","After-the-model",100,0.517262933,0.5458237667,0.535228812,0.720075513
+"pima","Pima - 5 categories","In-the-model",100,14.056125677,14.2916674439,14.2797255765,14.606049209
+"ctg","CTG - 3 categories","After-the-model",100,0.023318283,0.02822712404,0.0236388255,0.069052504
+"phishing","Phishing - 3 categories","After-the-model",100,1.868988552,1.93584283351,1.931811024,2.168588382
+"credit_min_suspicious","Credit Card - Minimum suspicious","After-the-model",100,1.643689739,1.78007617782,1.7952322785,1.990701218
+"credit_high_purity","Credit Card - High-purity High","After-the-model",100,1.600410285,1.85190040406,1.8445733635,1.95290672
+"credit_uncertainty","Credit Card - Uncertainty","After-the-model",100,1.634030203,1.90857049474,1.8896119885,2.047990206

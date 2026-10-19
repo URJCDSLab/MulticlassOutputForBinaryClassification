@@ -1,0 +1,4 @@
+"case","dataset_case","method","repetitions","min_s","mean_s","median_s","max_s"
+"credit_min_suspicious","Credit Card - Minimum suspicious","After-the-model",100,1.643689739,1.78007617782,1.7952322785,1.990701218
+"credit_high_purity","Credit Card - High-purity High","After-the-model",100,1.600410285,1.85190040406,1.8445733635,1.95290672
+"credit_uncertainty","Credit Card - Uncertainty","After-the-model",100,1.634030203,1.90857049474,1.8896119885,2.047990206

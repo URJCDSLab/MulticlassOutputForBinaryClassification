@@ -1,0 +1,3 @@
+"case","dataset_case","method","repetitions","min_s","mean_s","median_s","max_s"
+"pima","Pima - 5 categories","After-the-model",100,0.517262933,0.5458237667,0.535228812,0.720075513
+"pima","Pima - 5 categories","In-the-model",100,14.056125677,14.2916674439,14.2797255765,14.606049209
