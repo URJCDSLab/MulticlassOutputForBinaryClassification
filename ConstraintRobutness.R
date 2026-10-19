@@ -324,10 +324,15 @@ EvaluateConstraintRobustnessAfter <- function(thresholds, delta, make_user_condi
     thr <- threshold_set[i, ]
     user_condition_aux <- make_user_condition(thr)
     
-    result <- AfterTheModel(df, probs_model_train, restriction = TRUE, 
-                            user_condition = user_condition_aux, 
-                            vector_GPS = vector_GPS, 
-                            num_cuts = num_cuts)
+    # A perturbed constraint can make the search infeasible. Skip that
+    # perturbation rather than interrupting the complete sensitivity study.
+    result <- tryCatch(
+      suppressWarnings(AfterTheModel(df, probs_model_train, restriction = TRUE,
+                            user_condition = user_condition_aux,
+                            vector_GPS = vector_GPS,
+                            num_cuts = num_cuts)),
+      error = function(e) NULL
+    )
     
     gps_check <- is.list(result) && is.numeric(result$GPS) &&
       length(result$GPS) == 1L && is.finite(result$GPS)
@@ -417,10 +422,15 @@ EvaluateConstraintRobustnessAfterTrainTest <- function(thresholds, delta, make_u
     thr <- threshold_set[i, ]
     user_condition_aux <- make_user_condition(thr)
     
-    result <- AfterTheModel(df, probs_model_train, restriction = TRUE, 
-                            user_condition = user_condition_aux, 
-                            vector_GPS = vector_GPS, 
-                            num_cuts = num_cuts)
+    # A perturbed constraint can make the search infeasible. Skip that
+    # perturbation rather than interrupting the complete sensitivity study.
+    result <- tryCatch(
+      suppressWarnings(AfterTheModel(df, probs_model_train, restriction = TRUE,
+                            user_condition = user_condition_aux,
+                            vector_GPS = vector_GPS,
+                            num_cuts = num_cuts)),
+      error = function(e) NULL
+    )
     
     gps_check <- is.list(result) && is.numeric(result$GPS) &&
       length(result$GPS) == 1L && is.finite(result$GPS)
@@ -523,7 +533,7 @@ EvaluateConstraintRobustnessIn <- function(thresholds, delta, make_user_conditio
     # result <- InTheModel(df, kernelSVM = kernelSVM, num_cuts = num_cuts, cv_folds = cv_folds,
     #                      vector_GPS = vector_GPS,restriction = TRUE, user_condition = user_condition_aux)
     
-    result <- InTheModel(
+    result <- tryCatch(InTheModel(
       df = df,
       kernelSVM = kernelSVM,
       num_cuts = num_cuts,
@@ -534,7 +544,7 @@ EvaluateConstraintRobustnessIn <- function(thresholds, delta, make_user_conditio
       vector_GPS = vector_GPS,
       restriction = TRUE,
       user_condition = user_condition_aux
-    )
+    ), error = function(e) NULL)
     
     gps_check <- is.list(result) && is.numeric(result$GPS_test) &&
       length(result$GPS_test) == 1L && is.finite(result$GPS_test)
@@ -665,7 +675,7 @@ EvaluateConstraintRobustnessInTrainTest <- function(thresholds, delta, make_user
     # result <- InTheModel(df, kernelSVM = kernelSVM, num_cuts = num_cuts, cv_folds = cv_folds,
     #                      vector_GPS = vector_GPS,restriction = TRUE, user_condition = user_condition_aux)
     
-    result <- InTheModel(
+    result <- tryCatch(InTheModel(
       df = df,
       kernelSVM = kernelSVM,
       num_cuts = num_cuts,
@@ -676,7 +686,7 @@ EvaluateConstraintRobustnessInTrainTest <- function(thresholds, delta, make_user
       vector_GPS = vector_GPS,
       restriction = TRUE,
       user_condition = user_condition_aux
-    )
+    ), error = function(e) NULL)
     
     gps_check <- is.list(result) && is.numeric(result$GPS_test) &&
       length(result$GPS_test) == 1L && is.finite(result$GPS_test)

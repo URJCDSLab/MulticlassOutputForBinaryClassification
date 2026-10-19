@@ -1,0 +1,5 @@
+"case","dataset_case","method","partition","num_changes","changes_sizes","mean_dif_GPS","median_dif_GPS","sd_dif_GPS","mean_CM_prop_diff","median_CM_prop_diff","sd_CM_prop_diff"
+"credit_high_purity","Credit Card / High-purity High","After-the-model","train","1",1,0.000297625140120994,0.000297625140120994,NA,1.83916348156973e-05,2.00636016171264e-05,1.21491141081096e-05
+"credit_high_purity","Credit Card / High-purity High","After-the-model","train","TOTAL",1,0.000297625140120994,0.000297625140120994,NA,1.83916348156973e-05,2.00636016171264e-05,1.21491141081096e-05
+"credit_high_purity","Credit Card / High-purity High","After-the-model","test","1",1,0.00536340514966682,0.00536340514966682,NA,2.73092933525313e-05,2.92599571634228e-05,1.91125239856253e-05
+"credit_high_purity","Credit Card / High-purity High","After-the-model","test","TOTAL",1,0.00536340514966682,0.00536340514966682,NA,2.73092933525313e-05,2.92599571634228e-05,1.91125239856253e-05

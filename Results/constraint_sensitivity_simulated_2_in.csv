@@ -1,0 +1,3 @@
+"case","dataset_case","method","partition","num_changes","changes_sizes","mean_dif_GPS","median_dif_GPS","sd_dif_GPS","mean_CM_prop_diff","median_CM_prop_diff","sd_CM_prop_diff"
+"simulated_2_in","Simulated - 2 categories / In-the-model","In-the-model","simulated","1",2,0.0160165545628663,0.0160165545628663,0.0226508286852942,0.031969696969697,0.02,0.0386723794447222
+"simulated_2_in","Simulated - 2 categories / In-the-model","In-the-model","simulated","TOTAL",2,0.0160165545628663,0.0160165545628663,0.0226508286852942,0.031969696969697,0.02,0.0386723794447222

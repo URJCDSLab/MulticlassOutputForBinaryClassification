@@ -1,0 +1,11 @@
+"case","dataset_case","method","partition","num_changes","changes_sizes","mean_dif_GPS","median_dif_GPS","sd_dif_GPS","mean_CM_prop_diff","median_CM_prop_diff","sd_CM_prop_diff"
+"credit_uncertainty","Credit Card / Uncertainty","After-the-model","train","1",8,0,0,0,0,0,0
+"credit_uncertainty","Credit Card / Uncertainty","After-the-model","train","2",24,0,0,0,0,0,0
+"credit_uncertainty","Credit Card / Uncertainty","After-the-model","train","3",32,0,0,0,0,0,0
+"credit_uncertainty","Credit Card / Uncertainty","After-the-model","train","4",16,0,0,0,0,0,0
+"credit_uncertainty","Credit Card / Uncertainty","After-the-model","train","TOTAL",80,0,0,0,0,0,0
+"credit_uncertainty","Credit Card / Uncertainty","After-the-model","test","1",8,0,0,0,0,0,0
+"credit_uncertainty","Credit Card / Uncertainty","After-the-model","test","2",24,0,0,0,0,0,0
+"credit_uncertainty","Credit Card / Uncertainty","After-the-model","test","3",32,0,0,0,0,0,0
+"credit_uncertainty","Credit Card / Uncertainty","After-the-model","test","4",16,0,0,0,0,0,0
+"credit_uncertainty","Credit Card / Uncertainty","After-the-model","test","TOTAL",80,0,0,0,0,0,0

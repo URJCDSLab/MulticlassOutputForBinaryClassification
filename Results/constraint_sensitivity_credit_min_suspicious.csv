@@ -1,0 +1,5 @@
+"case","dataset_case","method","partition","num_changes","changes_sizes","mean_dif_GPS","median_dif_GPS","sd_dif_GPS","mean_CM_prop_diff","median_CM_prop_diff","sd_CM_prop_diff"
+"credit_min_suspicious","Credit Card / Minimum suspicious","After-the-model","train","1",2,0.0823425327724106,0.0823425327724106,0.116449926606894,0.000113693742497049,0,0.000228032557169545
+"credit_min_suspicious","Credit Card / Minimum suspicious","After-the-model","train","TOTAL",2,0.0823425327724106,0.0823425327724106,0.116449926606894,0.000113693742497049,0,0.000228032557169545
+"credit_min_suspicious","Credit Card / Minimum suspicious","After-the-model","test","1",2,0.0735656866468465,0.0735656866468465,0.10403759178126,9.16811991120578e-05,0,0.000193080784877363
+"credit_min_suspicious","Credit Card / Minimum suspicious","After-the-model","test","TOTAL",2,0.0735656866468465,0.0735656866468465,0.10403759178126,9.16811991120578e-05,0,0.000193080784877363

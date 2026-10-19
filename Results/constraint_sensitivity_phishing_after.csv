@@ -1,0 +1,5 @@
+"case","dataset_case","method","partition","num_changes","changes_sizes","mean_dif_GPS","median_dif_GPS","sd_dif_GPS","mean_CM_prop_diff","median_CM_prop_diff","sd_CM_prop_diff"
+"phishing_after","Phishing / After-the-model","After-the-model","train","1",2,0.0178995791793655,0.0178995791793655,0.00582051104305521,0.0175620033109403,0.0109065139485844,0.0158749911119127
+"phishing_after","Phishing / After-the-model","After-the-model","train","TOTAL",2,0.0178995791793655,0.0178995791793655,0.00582051104305521,0.0175620033109403,0.0109065139485844,0.0158749911119127
+"phishing_after","Phishing / After-the-model","After-the-model","test","1",2,0.0182865636828637,0.0182865636828637,0.0061827382723786,0.0176650892665089,0.0110037104753711,0.0161409944027765
+"phishing_after","Phishing / After-the-model","After-the-model","test","TOTAL",2,0.0182865636828637,0.0182865636828637,0.0061827382723786,0.0176650892665089,0.0110037104753711,0.0161409944027765
